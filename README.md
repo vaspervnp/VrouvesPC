@@ -55,7 +55,23 @@ second, path steps, ranges, armour, neighbour bonuses, score, lives).
   saving screenshots to `scratch/`. Game arguments (after `--`): `--stage N` starts at a
   stage, `--bot` lets it play itself (`--botspeed N`), `--perf` prints frame timings,
   `--shots DIR` saves a screenshot every 3 s, `--exit SECS` quits, `--lang en|gr` sets the
-  language for that run.
+  language and `--music` turns the music on for that run, `--funds N` gives the bot more
+  vrouves, `--ending SCORE` shows the ending.
+
+## Video
+
+`tools/record.sh NAME SECS [args]` records the game with Godot's Movie Maker (1350 × 1080,
+60 fps, with its sound) into `scratch/video/NAME.avi`, and `tools/make_video.py` cuts the
+recordings into a five minute 1080p video for YouTube, `build/video/LetsGoForVrouves-en.mp4`:
+the title screen, a stretch of each stage played by the bot, the ending, title and end
+cards, and the game's tune underneath. The recordings it expects:
+
+```
+tools/record.sh title_en 10 --lang en --music
+tools/record.sh s1_en 75 --lang en --stage 1 --bot --botspeed 1 --funds 120
+...                                    (stages 2-7 with --funds 250, 350, 450, 500, 500, 500)
+tools/record.sh end_en 16 --lang en --ending 18450
+```
 
 ## Exporting
 

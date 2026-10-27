@@ -57,8 +57,15 @@ func _ready() -> void:
 	if "--lang" in args:
 		# en or gr, for this run only (not saved)
 		Data.lang = 1 if args[args.find("--lang") + 1] == "gr" else 0
+	if "--music" in args:
+		Data.music_on = true            # for this run only, as --lang
 	if "--autotest" in args:
 		add_child(load("res://tests/autoplay.gd").new())
+	elif "--ending" in args:
+		# the ending screen with a score, for recording it
+		var e: Node = Ending.new()
+		e.score = int(args[args.find("--ending") + 1])
+		swap(e)
 	elif "--stage" in args:
 		stage_no = int(args[args.find("--stage") + 1])
 		lives = 3
@@ -106,6 +113,9 @@ func start_stage() -> void:
 		g.bot = true
 		var a := OS.get_cmdline_user_args()
 		g.speed = int(a[a.find("--botspeed") + 1]) if "--botspeed" in a else 3
+		if "--funds" in a:
+			# a richer start, to fill the map sooner when recording a video
+			g.funds = int(a[a.find("--funds") + 1])
 	g.finished.connect(_on_stage_finished)
 	swap(g)
 
