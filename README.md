@@ -11,7 +11,8 @@ Psssst.
 
 ## Playing
 
-Open the folder in Godot 4.7 and press F5, or run an exported build.
+Open the folder in Godot 4.7 and press F5, or run an exported build. The player's manual
+is in [English](manual/Manual-EN.md) and [Greek](manual/Manual-GR.md).
 
 | Mouse / key | Action |
 | --- | --- |
@@ -51,7 +52,8 @@ second, path steps, ranges, armour, neighbour bonuses, score, lives).
 * `tools/run_windowed.sh SECS [args]` runs the game from WSL in a window for SECS seconds,
   saving screenshots to `scratch/`. Game arguments (after `--`): `--stage N` starts at a
   stage, `--bot` lets it play itself (`--botspeed N`), `--perf` prints frame timings,
-  `--shots DIR` saves a screenshot every 3 s, `--exit SECS` quits.
+  `--shots DIR` saves a screenshot every 3 s, `--exit SECS` quits, `--lang en|gr` sets the
+  language for that run.
 
 ## Exporting
 

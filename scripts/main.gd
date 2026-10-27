@@ -54,6 +54,9 @@ func _ready() -> void:
 		get_tree().create_timer(float(args[args.find("--exit") + 1])).timeout.connect(get_tree().quit)
 	if "--perf" in args:
 		perf = true
+	if "--lang" in args:
+		# en or gr, for this run only (not saved)
+		Data.lang = 1 if args[args.find("--lang") + 1] == "gr" else 0
 	if "--autotest" in args:
 		add_child(load("res://tests/autoplay.gd").new())
 	elif "--stage" in args:
