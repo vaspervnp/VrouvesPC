@@ -337,7 +337,7 @@ def tank(t, p="Tank", frame=0):
 
 # ====================================================================== props
 
-def sack(t, p="Sack", full=True):
+def sack(t, p="Sack", full=True, label=True):
     if full:
         t.sphere(p + "_bag", (0, 0, 0.55), (0.55, 0.5, 0.58), "sack")
         t.torus(p + "_tie", (0, 0, 0.98), 0.38, 0.05, "brown")
@@ -349,7 +349,8 @@ def sack(t, p="Sack", full=True):
             a = k * 1.3 + 0.4
             t.sphere(p + "_fl%d" % k, (math.cos(a) * 0.22, math.sin(a) * 0.16 - 0.08, 1.3 + 0.04 * k),
                      (0.07, 0.07, 0.07), "yellow")
-        t.text(p + "_lbl", "ΒΡΟΥΒΕΣ", (0, -0.5, 0.55), 0.17, "brown", extrude=0.005)
+        if label:
+            t.text(p + "_lbl", "ΒΡΟΥΒΕΣ", (0, -0.5, 0.55), 0.17, "brown", extrude=0.005)
     else:
         t.sphere(p + "_bag", (0, 0, 0.12), (0.6, 0.5, 0.13), "sack")
         t.sphere(p + "_fold", (0.25, -0.1, 0.22), (0.25, 0.2, 0.08), "sack")

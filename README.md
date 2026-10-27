@@ -64,4 +64,27 @@ godot --headless --export-release "Windows" build/windows/LetsGoForVrouves.exe
 
 The macOS build is unsigned; on a Mac, right click → Open the first time.
 
+The icon (Psssst over a sack of vrouves) is rendered by `tools/blender/icon_blender.py`
+to `art/icon_1024.png`; `tools/make_icons.py` makes `art/icon.ico` (put into the Windows
+.exe by the export), `art/icon.png` and the setup's icons.
+
+## Setup
+
+`installer/` is the setup program, in C# with Avalonia 11 on .NET 10: one self-contained
+file per platform with the game inside it. It installs for the current user, without
+administrator rights, offers desktop and menu shortcuts, and leaves an uninstaller next to
+the game (in Settings → Apps on Windows), in English or Greek.
+
+| | Installs to | Shortcuts |
+| --- | --- | --- |
+| Windows | `%LOCALAPPDATA%\Programs\LetsGoForVrouves` | Start menu, desktop |
+| Linux | `~/.local/share/LetsGoForVrouves` | applications menu, desktop |
+| macOS | `~/Applications/Let's Go For Vrouves.app` | alias on the desktop |
+
+After exporting the game, `installer/build.sh` writes `build/setup/`:
+`VrouvesSetup-windows-x64.exe`, `VrouvesSetup-linux-x64` and
+`VrouvesSetup-macos-{x64,arm64}.zip` (an unsigned .app). The setup also takes
+`--quiet` (install or uninstall without questions), `--dir DIR`, `--no-shortcuts` and
+`--uninstall`.
+
 Fonts: Noto Sans (SIL Open Font License, `art/fonts/LICENSE-noto.txt`).

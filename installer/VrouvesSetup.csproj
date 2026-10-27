@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The setup program of LET'S GO FOR VROUVES: one self-contained file per platform,
+       with the game build for that platform inside it as a zip (Payload, see build.sh). -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>VrouvesSetup</AssemblyName>
+    <RootNamespace>VrouvesSetup</RootNamespace>
+    <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <Version>1.0.0</Version>
+    <Product>Let's Go For Vrouves Setup</Product>
+    <Company>Revive8bit</Company>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+    <!-- the zip with the game, given by build.sh -->
+    <Payload Condition="'$(Payload)' == ''">$(MSBuildThisFileDirectory)payload/payload.zip</Payload>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets/**" />
+    <EmbeddedResource Include="$(Payload)" LogicalName="payload.zip" Condition="Exists('$(Payload)')" />
+    <!-- the same program without the game, which stays next to it as the uninstaller -->
+    <EmbeddedResource Include="$(Uninstaller)" LogicalName="uninstall.bin" Condition="'$(Uninstaller)' != '' And Exists('$(Uninstaller)')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.22" />
+  </ItemGroup>
+</Project>

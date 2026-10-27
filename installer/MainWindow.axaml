@@ -1,0 +1,75 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="VrouvesSetup.MainWindow"
+        Width="760" Height="600" CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Icon="avares://VrouvesSetup/Assets/icon.ico"
+        Background="#F4F9EC"
+        Title="Let's Go For Vrouves - Setup">
+  <DockPanel>
+    <!-- the banner: the title picture of the game, with the icon and the name over it -->
+    <Panel DockPanel.Dock="Top" Height="230" ClipToBounds="True">
+      <Image Source="avares://VrouvesSetup/Assets/banner.png" Stretch="UniformToFill" />
+      <Border Background="#B0101830" CornerRadius="16" Padding="10,8,22,8" Margin="20,0,0,16"
+              HorizontalAlignment="Left" VerticalAlignment="Bottom">
+        <StackPanel Orientation="Horizontal" Spacing="14">
+          <Image x:Name="Logo" Source="avares://VrouvesSetup/Assets/icon.png" Width="96" Height="96" />
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Let's Go For Vrouves" FontSize="34" FontWeight="Black" Foreground="#FFD933" />
+            <TextBlock Text="Πάμε για Βρούβες" FontSize="25" FontWeight="Black" Foreground="#FF6A55" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <Button x:Name="LangButton" Classes="plain" HorizontalAlignment="Right" VerticalAlignment="Top"
+              Margin="0,12,12,0" Click="OnLang" />
+    </Panel>
+
+    <!-- the buttons at the bottom -->
+    <Border DockPanel.Dock="Bottom" Background="#E2EED3" Padding="20,12">
+      <DockPanel>
+        <Button x:Name="CancelButton" Classes="plain" DockPanel.Dock="Left" Click="OnCancel" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+          <Button x:Name="BackButton" Classes="plain" Click="OnBack" />
+          <Button x:Name="NextButton" Classes="big" Click="OnNext" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <Panel Margin="32,22,32,10">
+      <!-- welcome -->
+      <StackPanel x:Name="PageWelcome" Spacing="12">
+        <TextBlock x:Name="WelcomeTitle" Classes="title" />
+        <TextBlock x:Name="WelcomeText" TextWrapping="Wrap" FontSize="15" />
+        <TextBlock x:Name="ExistingText" TextWrapping="Wrap" FontSize="15" Foreground="#B03020" IsVisible="False" />
+        <Button x:Name="UninstallButton" Classes="plain" IsVisible="False" Click="OnUninstallExisting" />
+      </StackPanel>
+
+      <!-- options -->
+      <StackPanel x:Name="PageOptions" Spacing="12" IsVisible="False">
+        <TextBlock x:Name="OptionsTitle" Classes="title" />
+        <TextBlock x:Name="FolderLabel" FontSize="15" />
+        <DockPanel>
+          <Button x:Name="BrowseButton" Classes="plain" DockPanel.Dock="Right" Margin="8,0,0,0" Click="OnBrowse" />
+          <TextBox x:Name="FolderBox" FontSize="14" />
+        </DockPanel>
+        <CheckBox x:Name="DesktopCheck" IsChecked="True" />
+        <CheckBox x:Name="MenuCheck" IsChecked="True" />
+        <TextBlock x:Name="SpaceText" FontSize="13" Foreground="#556050" />
+      </StackPanel>
+
+      <!-- working -->
+      <StackPanel x:Name="PageWork" Spacing="18" IsVisible="False" VerticalAlignment="Center">
+        <TextBlock x:Name="WorkTitle" Classes="title" HorizontalAlignment="Center" />
+        <ProgressBar x:Name="Progress" Height="26" Minimum="0" Maximum="1" Foreground="#3FA02A" />
+        <TextBlock x:Name="WorkText" HorizontalAlignment="Center" FontSize="15" />
+      </StackPanel>
+
+      <!-- done -->
+      <StackPanel x:Name="PageDone" Spacing="14" IsVisible="False">
+        <TextBlock x:Name="DoneTitle" Classes="title" />
+        <TextBlock x:Name="DoneText" TextWrapping="Wrap" FontSize="15" />
+        <CheckBox x:Name="LaunchCheck" IsChecked="True" />
+      </StackPanel>
+    </Panel>
+  </DockPanel>
+</Window>

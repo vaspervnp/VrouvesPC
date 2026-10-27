@@ -1,0 +1,38 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="VrouvesSetup.App"
+             RequestedThemeVariant="Light">
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="Button.big">
+      <Setter Property="Background" Value="#D93A26" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="Padding" Value="28,10" />
+      <Setter Property="CornerRadius" Value="10" />
+    </Style>
+    <Style Selector="Button.big:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#F05038" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.plain">
+      <Setter Property="Background" Value="#2A3A80" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="18,8" />
+    </Style>
+    <Style Selector="Button.plain:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#3B50A8" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="TextBlock.title">
+      <Setter Property="FontSize" Value="26" />
+      <Setter Property="FontWeight" Value="Black" />
+      <Setter Property="Foreground" Value="#1E3A0E" />
+    </Style>
+    <Style Selector="CheckBox">
+      <Setter Property="FontSize" Value="15" />
+    </Style>
+  </Application.Styles>
+</Application>
