@@ -12,7 +12,9 @@ Psssst.
 ## Playing
 
 Open the folder in Godot 4.7 and press F5, or run an exported build. The player's manual
-is in [English](manual/Manual-EN.md) and [Greek](manual/Manual-GR.md).
+is in [English](manual/Manual-EN.md) and [Greek](manual/Manual-GR.md);
+`tools/make_manual_pdf.py` prints both to PDF in `build/manual/` (it needs the `markdown`
+package and Microsoft Edge on the Windows side of WSL).
 
 | Mouse / key | Action |
 | --- | --- |
