@@ -104,7 +104,7 @@ def ground(mp, rnd):
 
 def props(mp, rnd):
     t = mp.t
-    for (c, r) in mp.cells("TCGYWX"):
+    for (c, r) in mp.cells("TCGYWXRSJD"):
         ch = mp.ch(c, r)
         x, y = mp.centre(c, r)
         p = "%s_%d_%d" % (ch, c, r)
@@ -118,6 +118,14 @@ def props(mp, rnd):
             m.cypress(t, p, x, y, 1.0)
         elif ch == "X":
             m.grave(t, p, x, y, 0 if (c + r) % 4 < 2 else 1)
+        elif ch == "R":
+            m.rock(t, p, x, y, (c * 3 + r) % 2)
+        elif ch == "S":
+            m.sheep(t, p, x, y, turn=rnd.choice((-25, 15, 160, 195)), s=0.95)
+        elif ch == "J":
+            m.jar(t, p, x, y, 0.95)
+        elif ch == "D":
+            m.wedding_table(t, p, x, y, mp.S, mp.ch(c - 1, r) == "D", mp.ch(c + 1, r) == "D")
         elif ch == "W":
             m.wall_cell(t, p, x, y, mp.S, mp.D, mp.ch(c - 1, r) == "W", mp.ch(c + 1, r) == "W",
                         mp.ch(c, r - 1) == "W", mp.ch(c, r + 1) == "W")

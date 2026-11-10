@@ -266,14 +266,14 @@ func draw_story() -> void:
 
 func draw_defenders() -> void:
 	var r := page_frame(Data.t("defenders_t"))
-	for i in 6:
+	for i in Data.TOWER_ORDER.size():
 		var type: int = Data.TOWER_ORDER[i]
 		var tt: Dictionary = Data.TTYPES[type]
-		var y := r.position.y + 130 + i * 86
-		spr(tt["spr"], Vector2(r.position.x + 90, y + 50), 0.62)
-		txt(Vector2(r.position.x + 160, y + 10), "%d. %s - %d" % [i + 1, Data.t("name%d" % type), int(tt["cost"])], 26, C_GOLD)
-		txt(Vector2(r.position.x + 160, y + 42), Data.t("desc%d" % type), 20, Color.WHITE)
-	draw_multiline_string(Data.font_bold, Vector2(r.position.x + 60, r.end.y - 70), Data.t("synergy_help"),
+		var y := r.position.y + 112 + i * 68
+		spr(tt["spr"], Vector2(r.position.x + 90, y + 46), 0.52)
+		txt(Vector2(r.position.x + 160, y + 10), "%d. %s - %d" % [i + 1, Data.t("name%d" % type), int(tt["cost"])], 24, C_GOLD)
+		txt(Vector2(r.position.x + 160, y + 38), Data.t("desc%d" % type), 19, Color.WHITE)
+	draw_multiline_string(Data.font_bold, Vector2(r.position.x + 60, r.end.y - 92), Data.t("synergy_help"),
 		HORIZONTAL_ALIGNMENT_CENTER, r.size.x - 120, 17, -1, Color(0.7, 1, 0.6))
 
 

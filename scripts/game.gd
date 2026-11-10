@@ -105,6 +105,7 @@ var selected := Data.CRETAN
 var cursor := Vector2i(7, 3)
 var mouse_in_field := false
 var paused := false
+var quit_ask := false                   # ESC once: "quit this game?"; ESC again quits
 var speed := 1
 var game_over := 0                      # 1 won, 2 lost
 var end_wait := 0.0
@@ -121,8 +122,10 @@ var hover_btn := ""
 var buttons := {}                       # name -> Rect2, the clickable parts of the HUD
 var bot := false                        # plays by itself (--bot, the tests, the title demo)
 var bot_step := 0
+var plan: Array = []                    # --plan: the CPC's build plan for this stage, [type, col, row]
+const PLAN_SUBSTITUTE := {2: [1], 3: [1, 4], 5: [4, 1], 6: [1], 7: [4, 1]}
 const BOT_PLAN := [Data.CRETAN, Data.CRETAN, Data.PSSSST, Data.CRETAN, Data.BRIDE, Data.YIAYIA,
-	Data.BAKER, Data.CAULDRON, Data.CRETAN, Data.BRIDE, Data.PSSSST, Data.YIAYIA]
+	Data.BAKER, Data.CAULDRON, Data.CRETAN, Data.BRIDE, Data.LYRA, Data.PSSSST, Data.YIAYIA]
 
 
 func setup(n: int, start_score: int, lives_left: int) -> void:
@@ -145,12 +148,14 @@ func setup(n: int, start_score: int, lives_left: int) -> void:
 	towers.resize(32)
 	towers.fill(null)
 	paths["ground"] = make_path(stage["ground"])
+	if not stage["ground2"].is_empty():
+		paths["ground2"] = make_path(stage["ground2"])
 	paths["air"] = make_path(stage["air"])
 	rng.seed = 0xA5F3 ^ Time.get_ticks_msec()
 	selected = stage["defenders"][0]
 	msg = Data.t("call")
 	msg_timer = -1
-	var newdef := {2: Data.YIAYIA, 3: Data.BRIDE, 4: Data.BAKER, 5: Data.CAULDRON}
+	var newdef := {2: Data.YIAYIA, 3: Data.BRIDE, 4: Data.BAKER, 5: Data.CAULDRON, 8: Data.LYRA}
 	if stage_no == 1:
 		banner = [Data.stage_text(1, 0), "[1] %s - %s" % [Data.t("name1"), Data.t("desc1")],
 			"[4] %s - %s" % [Data.t("name4"), Data.t("desc4")]]
@@ -160,6 +165,10 @@ func setup(n: int, start_score: int, lives_left: int) -> void:
 		banner = [Data.stage_text(stage_no, 0), Data.t("newdef"),
 			"[%d] %s - %s" % [Data.TOWER_ORDER.find(d) + 1, Data.t("name%d" % d), Data.t("desc%d" % d)]]
 		selected = d
+		ban_timer = 250
+	elif not Data.BRIDE in stage["defenders"] and stage_no > 3:
+		# the wedding: the Bride is at the altar
+		banner = [Data.stage_text(stage_no, 0), Data.t("altar"), Data.t("altar2")]
 		ban_timer = 250
 	else:
 		banner = [Data.stage_text(stage_no, 0)]
@@ -353,6 +362,10 @@ func spawn_enemy(type: int) -> void:
 	var e := Enemy.new()
 	e.type = type
 	e.path = paths["air"] if type == Data.DRONE else paths["ground"]
+	gen_ctr += 1
+	# with a second road, every other walker takes it
+	if type != Data.DRONE and paths.has("ground2") and gen_ctr % 2 == 0:
+		e.path = paths["ground2"]
 	e.x = e.path["x0"]
 	e.y = e.path["y0"]
 	e.px = e.x
@@ -363,7 +376,6 @@ func spawn_enemy(type: int) -> void:
 	e.max_hp = e.hp
 	e.arm = et["arm"]
 	e.anim = rng.randi() & 255
-	gen_ctr += 1
 	e.gen = gen_ctr
 	enemies.append(e)
 
@@ -532,6 +544,18 @@ func fire(tw: Tower, tg: Enemy) -> void:
 						add_fx("puff", e.x + 6, e.y + 4, 0.5)
 						clouds += 1
 					damage_enemy(e, 8, true)
+		Data.LYRA:
+			# his tune reaches everyone around him, drones too; armour counts; drones slow down
+			var notes := 0
+			var d := tower_damage(tw)
+			for e: Enemy in enemies.duplicate():
+				if in_range(tw, e, tt["range"]):
+					if e.type == Data.DRONE:
+						e.slow = 30
+					if notes < 2:
+						add_fx("notes", e.x + 6, e.y - 2, 0.4)
+						notes += 1
+					damage_enemy(e, d)
 		_:
 			var p := Proj.new()
 			p.kind = tt["proj"]
@@ -694,17 +718,17 @@ func try_sell(c: int, r: int) -> void:
 # ====================================================================== neighbours
 
 func syn_factor_at(c: int, r: int, type: int) -> int:
-	if not Data.SYNERGY.has(type):
-		return 0
-	var partner: int = Data.SYNERGY[type][0]
-	for d in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
-		var cc: int = c + d.x
-		var rr: int = r + d.y
-		if cc < 0 or rr < 0 or cc >= Data.COLS or rr >= Data.ROWS:
+	for pair in Data.SYNERGY:
+		if pair[0] != type:
 			continue
-		var tw = tower_at[rr][cc]
-		if tw and tw.type == partner:
-			return Data.SYNERGY[type][1]
+		for d in [Vector2i(-1, 0), Vector2i(1, 0), Vector2i(0, -1), Vector2i(0, 1)]:
+			var cc: int = c + d.x
+			var rr: int = r + d.y
+			if cc < 0 or rr < 0 or cc >= Data.COLS or rr >= Data.ROWS:
+				continue
+			var tw = tower_at[rr][cc]
+			if tw and tw.type == pair[1]:
+				return pair[2]
 	return 0
 
 
@@ -812,12 +836,14 @@ func _unhandled_input(ev: InputEvent) -> void:
 			return
 		KEY_H:
 			paused = not paused
+			quit_ask = false
 			return
 		KEY_ESCAPE:
-			if paused:
+			if quit_ask:
 				leave()
 			else:
 				paused = true
+				quit_ask = true
 			return
 	if paused:
 		return
@@ -838,7 +864,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 			call_wave_now()
 		KEY_F:
 			speed = 1 + speed % 3
-		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6:
+		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7:
 			select(Data.TOWER_ORDER[k - KEY_1])
 
 
@@ -867,6 +893,7 @@ func press_button(b: String) -> void:
 		speed = 1 + speed % 3
 	elif b == "pause":
 		paused = not paused
+		quit_ask = false
 	elif b == "quit":
 		leave()
 
@@ -1121,6 +1148,11 @@ func draw_effect(f: Fx) -> void:
 			if f.kind == "boom" or t < 0.5:
 				text(pos + Vector2(-50, -10), "BOOM!" if f.kind == "boom" else "BONK!", 22 if f.kind == "boom" else 18,
 					Color(1, 1, 0.6, a), HORIZONTAL_ALIGNMENT_CENTER, 100, Data.font_title, 5)
+		"notes":
+			var sc := 0.7 + t * 0.4
+			draw_set_transform(pos + Vector2(0, 30 - t * 40), 0.0, Vector2(sc, sc) * SPR)
+			draw_texture(Data.tex("fx_notes" if int(t * 4) % 2 == 0 else "fx_notes_b"), -Vector2(128, 200), Color(1, 1, 1, a))
+			draw_set_transform(Vector2.ZERO)
 		"puff", "poof", "poof_b":
 			var nm := "fx_puff" if f.kind == "puff" else ("fx_poof" if f.kind == "poof" else "fx_poof_b")
 			var sc := 0.5 + t * 0.7
@@ -1164,10 +1196,10 @@ func draw_bottom_bar() -> void:
 	buttons.clear()
 	draw_rect(Rect2(0, BOT_Y, PF_W, 1024 - BOT_Y), C_BAR)
 	draw_rect(Rect2(0, BOT_Y, PF_W, 3), C_GOLD)
-	for i in 6:
+	for i in Data.TOWER_ORDER.size():
 		var type: int = Data.TOWER_ORDER[i]
 		var tt: Dictionary = Data.TTYPES[type]
-		var r := Rect2(8 + i * 108, BOT_Y + 8, 102, 66)
+		var r := Rect2(8 + i * 94, BOT_Y + 8, 89, 66)
 		var key := "def%d" % type
 		buttons[key] = r
 		var unlocked: bool = type in stage["defenders"]
@@ -1180,19 +1212,19 @@ func draw_bottom_bar() -> void:
 		draw_rect(r, bg)
 		draw_rect(r, C_GOLD if type == selected else Color(1, 1, 1, 0.25), false, 2.0)
 		if unlocked:
-			draw_sprite(tt["spr"], r.position + Vector2(30, 60), 0.62, false, Color.WHITE if afford else Color(1, 1, 1, 0.45))
-			text(r.position + Vector2(54, 24), "%d" % int(tt["cost"]), 20, C_GOLD if afford else C_BAD)
+			draw_sprite(tt["spr"], r.position + Vector2(26, 60), 0.62, false, Color.WHITE if afford else Color(1, 1, 1, 0.45))
+			text(r.position + Vector2(48, 24), "%d" % int(tt["cost"]), 20, C_GOLD if afford else C_BAD)
 			text(r.position + Vector2(4, 18), "%d" % (i + 1), 16, Color(1, 1, 1, 0.7))
 			var nm := Data.t("name%d" % type)
 			var fs := 13
-			while fs > 8 and Data.font_bold.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 50:
+			while fs > 8 and Data.font_bold.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 42:
 				fs -= 1
-			text(r.position + Vector2(50, 54), nm, fs, Color.WHITE)
+			text(r.position + Vector2(44, 54), nm, fs, Color.WHITE)
 		else:
-			draw_sprite(tt["spr"], r.position + Vector2(50, 62), 0.62, false, Color(0, 0, 0, 0.5))
+			draw_sprite(tt["spr"], r.position + Vector2(44, 62), 0.62, false, Color(0, 0, 0, 0.5))
 			text(r.position + Vector2(0, 40), "?", 30, Color(1, 1, 1, 0.5), HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 	# the info line: what is under the cursor or selected
-	var ix := 664.0
+	var ix := 672.0
 	var info := ""
 	var info2 := ""
 	var info_col := Color.WHITE
@@ -1212,7 +1244,7 @@ func draw_bottom_bar() -> void:
 			elif f > 16:
 				info2 = syn_label(f) + ("" if syn_count() < Data.SYN_MAX else " " + Data.t("bonus_full"))
 				info_col = C_OK if syn_count() < Data.SYN_MAX else Color(0.7, 0.7, 0.7)
-	draw_info(Vector2(ix, BOT_Y + 26), info, 15, Color.WHITE, 360)
+	draw_info(Vector2(ix, BOT_Y + 26), info, 15, Color.WHITE, 350)
 	if info2 != "":
 		text(Vector2(ix, BOT_Y + 70), info2, 15, info_col)
 	# buttons
@@ -1252,7 +1284,7 @@ func draw_info(pos: Vector2, s: String, size: int, col: Color, width: float) -> 
 func draw_banner() -> void:
 	if paused and not game_over:
 		draw_rect(Rect2(0, TOP, PF_W, PF_H), Color(0, 0, 0, 0.45))
-		box([Data.t("paused"), Data.t("paused2")])
+		box([Data.t("quit_ask"), Data.t("quit_ask2")] if quit_ask else [Data.t("paused"), Data.t("paused2")])
 		return
 	if banner.is_empty():
 		return
@@ -1287,6 +1319,9 @@ func box(lines: Array) -> void:
 func bot_tick() -> void:
 	if game_over:
 		return
+	if not plan.is_empty() or bot_step < 0:
+		plan_tick()
+		return
 	var want: int = BOT_PLAN[bot_step % BOT_PLAN.size()]
 	if not want in stage["defenders"]:
 		bot_step += 1
@@ -1314,4 +1349,26 @@ func bot_tick() -> void:
 			selected = keep
 		bot_step += 1
 	if not wave_active and cd_sec < (40 if wave_num == 0 else 12):
+		call_wave_now()
+
+
+## the CPC's way of testing a stage (tools/scenario.py): build the plan in order as the
+## vrouves come in, and call the next wave as soon as the next one cannot be afforded
+func plan_tick() -> void:
+	bot_step = -1
+	while not plan.is_empty():
+		var t: int = plan[0][0]
+		if not t in stage["defenders"]:
+			for u in PLAN_SUBSTITUTE[t]:
+				if u in stage["defenders"]:
+					t = u
+					break
+		if funds < int(Data.TTYPES[t]["cost"]):
+			break
+		var keep := selected
+		selected = t
+		try_build(int(plan[0][1]), int(plan[0][2]))
+		selected = keep
+		plan.pop_front()
+	if not wave_active and (plan.is_empty() or funds < int(Data.TTYPES[plan[0][0]]["cost"])):
 		call_wave_now()

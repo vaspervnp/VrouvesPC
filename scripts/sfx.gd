@@ -1,10 +1,10 @@
 extends Node
 ## Music and sound effects (art/audio, made by tools/make_audio.py from the CPC tables).
 
-const NAMES := ["rifle", "pistol", "laser", "throw", "bash", "puff", "die", "hurt", "build",
+const NAMES := ["rifle", "pistol", "laser", "throw", "bash", "puff", "lyra", "die", "hurt", "build",
 	"error", "sell", "wave", "crush", "move"]
 ## like the AY channel on the CPC: a sound only cuts in over one of lower or equal priority
-const PRIO := {"move": 0, "pistol": 1, "rifle": 1, "laser": 1, "throw": 1, "puff": 2, "bash": 2,
+const PRIO := {"move": 0, "pistol": 1, "rifle": 1, "laser": 1, "throw": 1, "lyra": 1, "puff": 2, "bash": 2,
 	"die": 3, "sell": 4, "build": 4, "error": 4, "crush": 5, "hurt": 6, "wave": 7}
 const VOICES := 6
 

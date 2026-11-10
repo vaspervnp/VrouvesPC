@@ -12,7 +12,7 @@ func _ready() -> void:
 		if a.is_valid_int():
 			which.append(int(a))
 	if which.is_empty():
-		which = [1, 2, 3, 4, 5, 6, 7]
+		which = range(1, Data.stages.size() + 1)
 	var all_ok := true
 	for n in which:
 		all_ok = play(n) and all_ok
@@ -47,7 +47,7 @@ func play(n: int) -> bool:
 	add_child(g)
 	g.set_process(false)
 	var plan := [Data.CRETAN, Data.CRETAN, Data.PSSSST, Data.CRETAN, Data.BRIDE, Data.YIAYIA, Data.BAKER,
-		Data.CAULDRON, Data.CRETAN, Data.BRIDE, Data.PSSSST]
+		Data.CAULDRON, Data.CRETAN, Data.LYRA, Data.BRIDE, Data.PSSSST]
 	var step := 0
 	var ticks := 0
 	var last_wave := 0

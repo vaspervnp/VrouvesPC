@@ -16,7 +16,7 @@ const MAX_ENEMIES := 16
 const SYN_MAX := 3
 
 enum { DRONE = 1, GUARD = 2, TANK = 3 }
-enum { CRETAN = 1, YIAYIA = 2, BRIDE = 3, PSSSST = 4, CAULDRON = 5, BAKER = 6 }
+enum { CRETAN = 1, YIAYIA = 2, BRIDE = 3, PSSSST = 4, CAULDRON = 5, BAKER = 6, LYRA = 7 }
 
 ## base hp, hp per wave, speed (1/16 step per tick), armour, reward, base damage (= points)
 const ETYPES := {
@@ -33,12 +33,14 @@ const TTYPES := {
 	PSSSST: {"cost": 80, "range": 36, "cd": 10, "dmg": 5, "air": true, "proj": "laser", "sfx": "laser", "sell": 40, "spr": "psssst"},
 	CAULDRON: {"cost": 110, "range": 22, "cd": 32, "dmg": 8, "air": false, "proj": "", "sfx": "puff", "sell": 55, "spr": "cauldron"},
 	BAKER: {"cost": 60, "range": 34, "cd": 36, "dmg": 16, "air": true, "proj": "dakos", "sfx": "throw", "sell": 30, "spr": "baker"},
+	LYRA: {"cost": 90, "range": 26, "cd": 26, "dmg": 4, "air": true, "proj": "", "sfx": "lyra", "sell": 45, "spr": "lyra"},
 }
 ## the order of the toolbar, as the keys 1-6
-const TOWER_ORDER := [CRETAN, YIAYIA, BRIDE, PSSSST, CAULDRON, BAKER]
+const TOWER_ORDER := [CRETAN, YIAYIA, BRIDE, PSSSST, CAULDRON, BAKER, LYRA]
 
-## neighbour bonus: defender -> [partner, factor in 1/16]
-const SYNERGY := {YIAYIA: [BAKER, 19], BRIDE: [CRETAN, 24], PSSSST: [CRETAN, 13], BAKER: [CRETAN, 8]}
+## neighbour bonus: [defender, next to, factor in 1/16]; the first pair that holds counts
+const SYNERGY := [[YIAYIA, BAKER, 19], [BRIDE, CRETAN, 24], [PSSSST, CRETAN, 13], [BAKER, CRETAN, 8],
+	[LYRA, LYRA, 8], [LYRA, YIAYIA, 24]]
 
 ## the difficulties in the order D goes through them: lives for the whole game
 const DIFFICULTY_LIVES := [3, 2, 0, 4]
@@ -192,10 +194,10 @@ const TEXT := {
 	"back": ["Back", "Πίσω"],
 	"story": ["Armed with EU Directive 8647/2026, the corporate Goliaths at Frankenstein & Moreau Co. are deploying bio-drones, hazard squads and heavy machinery to destroy 'vrouves' - the wild, 'copyrighted' mountain greens of Crete.\n\nIn the village of Zoniana, deploy the defenders to protect the kafenio and its precious sacks of bitter greens!\n\nLuckily the rebel corporate drone Psssst has defected, and fights alongside the heavily fortified villagers.",
 		"Οπλισμένοι με την Οδηγία ΕΕ 8647/2026, οι κολοσσοί της Frankenstein & Moreau Co. στέλνουν βιο-ντρον, συνεργεία και βαριά μηχανήματα για να ξεριζώσουν τις 'βρούβες' - τα άγρια, 'κατοχυρωμένα' χόρτα των βουνών της Κρήτης.\n\nΣτα Ζωνιανά, στήσε τους υπερασπιστές για να προστατέψεις το καφενείο και τα πολύτιμα σακιά με τα πικρά χόρτα!\n\nΕυτυχώς το επαναστατημένο ντρον Ψσσστ αυτομόλησε και πολεμά δίπλα στους οχυρωμένους χωριανούς."],
-	"controls": ["Mouse: point at a tile, left click builds, right click sells.\nKeys: arrows / QAOP move, SPACE builds, 1-6 choose, S sells, N calls the next wave, F speeds up, H pauses, L language, M music, ESC menu.",
-		"Ποντίκι: δείξε ένα τετράγωνο, αριστερό κλικ χτίζει, δεξί κλικ πουλάει.\nΠλήκτρα: βελάκια / QAOP κίνηση, SPACE χτίσιμο, 1-6 επιλογή, S πούλημα, N επόμενο κύμα, F γρήγορα, H παύση, L γλώσσα, M μουσική, ESC μενού."],
-	"synergy_help": ["Neighbours matter! Bride next to a Cretan +50%, Yiayia next to a Baker +20%, Baker next to a Cretan -50%, Psssst next to a Cretan -20%. At most three bonuses at a time.",
-		"Οι γείτονες μετράνε! Νύφη δίπλα σε Κρητικό +50%, Γιαγιά δίπλα σε Φούρναρη +20%, Φούρναρης δίπλα σε Κρητικό -50%, Ψσσστ δίπλα σε Κρητικό -20%. Το πολύ τρία μπόνους μαζί."],
+	"controls": ["Mouse: point at a tile, left click builds, right click sells.\nKeys: arrows / QAOP move, SPACE builds, 1-7 choose, S sells, N calls the next wave, F speeds up, H pauses, L language, M music, ESC menu.",
+		"Ποντίκι: δείξε ένα τετράγωνο, αριστερό κλικ χτίζει, δεξί κλικ πουλάει.\nΠλήκτρα: βελάκια / QAOP κίνηση, SPACE χτίσιμο, 1-7 επιλογή, S πούλημα, N επόμενο κύμα, F γρήγορα, H παύση, L γλώσσα, M μουσική, ESC μενού."],
+	"synergy_help": ["Neighbours matter! Bride next to a Cretan +50%, Yiayia next to a Baker +20%, Lyra player next to a Yiayia +50%; Baker next to a Cretan -50%, Psssst next to a Cretan -20%, two Lyra players together -50%. At most three bonuses at a time.",
+		"Οι γείτονες μετράνε! Νύφη δίπλα σε Κρητικό +50%, Γιαγιά δίπλα σε Φούρναρη +20%, Λυράρης δίπλα σε Γιαγιά +50%· Φούρναρης δίπλα σε Κρητικό -50%, Ψσσστ δίπλα σε Κρητικό -20%, δύο Λυράρηδες μαζί -50%. Το πολύ τρία μπόνους μαζί."],
 	"name1": ["Cretan", "Κρητικός"],
 	"name2": ["Yiayia", "Γιαγιά"],
 	"name3": ["Bride", "Νύφη"],
@@ -207,6 +209,8 @@ const TEXT := {
 	"desc3": ["Wedding white, rapid pistol. One shot in four is a triple critical.", "Νυφικό και γρήγορο πιστόλι. Μία στις τέσσερις, τριπλή ζημιά."],
 	"desc4": ["The defected drone. Laser melts armour. Hovers over walls and trees.", "Το αυτόμολο ντρον. Λέιζερ που λιώνει θώρακες. Πετά πάνω από τοίχους."],
 	"desc5": ["Unlicensed lipids & ascorbic acids: toxic area cloud, ignores armour.", "Αδειοδότητα λιπίδια & ασκορβικά: τοξικό σύννεφο, αγνοεί θώρακες."],
+	"name7": ["Lyra player", "Λυράρης"],
+	"desc7": ["His tune hits every invader in reach, drones too, and slows the drones.", "Η μαντινάδα του χτυπά όλους γύρω του, και ντρον, και φρενάρει τα ντρον."],
 	"desc6": ["Hurls dakos (barley rusks) that splash everything around.", "Πετάει ντάκους (κριθαροκούλουρα) που πιτσιλάνε τα πάντα."],
 	"ename1": ["Bio-drone", "Βιο-ντρον"],
 	"ename2": ["Compliance guard", "Φύλακας συμμόρφωσης"],
@@ -235,6 +239,10 @@ const TEXT := {
 	"clear": ["Wave cleared! Bonus vrouves!", "Το κύμα αποκρούστηκε! Μπόνους!"],
 	"final": ["Final wave! Here come the tanks!", "Τελικό κύμα! Έρχονται τα τανκς!"],
 	"newdef": ["A new defender joins the village!", "Νέος αμυντικός στο χωριό!"],
+	"altar": ["The Bride is at the altar!", "Η Νύφη στεφανώνεται!"],
+	"altar2": ["Hold them off without her!", "Κρατήστε τους μακριά χωρίς αυτή!"],
+	"quit_ask": ["Quit this game?", "Έξοδος από το παιχνίδι;"],
+	"quit_ask2": ["H: continue    ESC: quit", "H: συνέχεια    ESC: έξοδος"],
 	"press": ["Click or press SPACE", "Κλικ ή SPACE"],
 	"paused": ["Paused", "Παύση"],
 	"paused2": ["H: continue    ESC: quit to the title", "H: συνέχεια    ESC: έξοδος στον τίτλο"],
@@ -242,7 +250,7 @@ const TEXT := {
 	"life_lost": ["You lose a life. Try the stage again!", "Χάνεις μια ζωή. Ξανά από την αρχή!"],
 	"newhs": ["New high score!", "Νέο ρεκόρ!"],
 	"entername": ["Type your name (3 letters) and press ENTER", "Γράψε το όνομά σου (3 γράμματα) και πάτα ENTER"],
-	"ending": ["The whole village celebrates with a feast in front of the school!", "Όλο το χωριό γιορτάζει με τραπέζι μπροστά στο σχολείο!"],
+	"ending": ["The Bride's wedding: the whole village dances in front of the church!", "Ο γάμος της Νύφης: όλο το χωριό γλεντά μπροστά στην εκκλησία!"],
 	"ending2": ["The vrouves of Crete are safe. Kali orexi!", "Οι βρούβες της Κρήτης σώθηκαν. Καλή όρεξη!"],
 	"final_score": ["Final score: %d", "Τελικό σκορ: %d"],
 }
@@ -275,8 +283,17 @@ const STAGE_TEXT := [
 		["Pitch saved! Now, to the cemetery!", "Το γήπεδο σώθηκε! Στο νεκροταφείο!"],
 		["The pitch has fallen!", "Το γήπεδο έπεσε!"]],
 	[["Stage 7: The cemetery church", "Πίστα 7: Η εκκλησία του νεκροταφείου"],
-		["Victory! The vrouves are safe!", "Νίκη! Οι βρούβες σώθηκαν!"],
+		["Cemetery saved! Now, up the mountain!", "Το νεκροταφείο σώθηκε! Στο βουνό!"],
 		["The cemetery church has fallen!", "Η εκκλησία του νεκροταφείου έπεσε!"]],
+	[["Stage 8: The sheepfold", "Πίστα 8: Η στάνη στο βουνό"],
+		["Sheepfold saved! Now, to the olive press!", "Η στάνη σώθηκε! Στο λιοτρίβι!"],
+		["The sheepfold has fallen!", "Η στάνη έπεσε!"]],
+	[["Stage 9: The olive press", "Πίστα 9: Το λιοτρίβι"],
+		["Olive press saved! Now, to the wedding!", "Το λιοτρίβι σώθηκε! Στο γάμο!"],
+		["The olive press has fallen!", "Το λιοτρίβι έπεσε!"]],
+	[["Stage 10: The Bride's wedding", "Πίστα 10: Ο γάμος της Νύφης"],
+		["Wedding saved! Long live the couple!", "Ο γάμος σώθηκε! Ζήτω το ζευγάρι!"],
+		["The wedding has fallen!", "Ο γάμος χάλασε!"]],
 ]
 
 

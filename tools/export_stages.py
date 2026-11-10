@@ -1,5 +1,5 @@
 """Copy the stage data of the CPC original (../VrouvesCPC/tools/gen_assets.py) into
-data/stages.json for the Godot game: maps, ground and air waypoints, sacks, waves,
+data/stages.json for the Godot game: maps, ground (one or two roads) and air waypoints, sacks, waves,
 toughness and the defenders each stage has.
 
     python3 tools/export_stages.py [path/to/VrouvesCPC]
@@ -22,19 +22,25 @@ if "PIL" not in sys.modules:
 
 import gen_assets as g  # noqa: E402
 
-BASE_NAMES = ["kafenio", "church", "town_hall", "bakery", "school", "pitch", "cemetery"]
+BASE_NAMES = ["kafenio", "church", "town_hall", "bakery", "school", "pitch", "cemetery",
+              "sheepfold", "olive_press", "wedding"]
 
 
 def main():
     stages = []
     for k, st in enumerate(g.STAGES):
         unlock = g.UNLOCKS[min(k, len(g.UNLOCKS) - 1)][0]
+        grid = g.carve_path(st.map, st.ground)
+        if st.ground2:
+            grid = g.carve_path(grid, st.ground2)
         stages.append({
             "id": k + 1,
             "base": BASE_NAMES[k],
             "map": [r.ljust(g.MW, '.')[:g.MW] for r in st.map],
-            "grid": g.carve_path(st.map, st.ground),
+            "grid": grid,
             "ground": [list(p) for p in st.ground],
+            # a second road for the walkers (every other one takes it), or none
+            "ground2": [list(p) for p in st.ground2] if st.ground2 else [],
             "air": [list(p) for p in st.air],
             "sacks": [list(p) for p in st.sacks],
             "waves": [[list(grp) for grp in w] for w in getattr(g, st.waves)],

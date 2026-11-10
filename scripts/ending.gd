@@ -1,6 +1,6 @@
 extends Node2D
-## The ending: the whole village at a feast in front of the school (rendered in Blender
-## from the CPC version's ending scene).
+## The ending: the Bride's wedding feast in front of the church (rendered in Blender for
+## the CPC version, tools/blender/wedding_blender.py).
 
 signal done
 
@@ -35,8 +35,8 @@ func _draw() -> void:
 	var sc := W / s.x
 	draw_texture_rect(pic, Rect2(0, 120, W, s.y * sc), false)
 	var f := Data.font_title
-	draw_string_outline(f, Vector2(0, 90), Data.stage_text(7, 1), HORIZONTAL_ALIGNMENT_CENTER, W, 56, 14, Color.BLACK)
-	draw_string(f, Vector2(0, 90), Data.stage_text(7, 1), HORIZONTAL_ALIGNMENT_CENTER, W, 56, Color(1, 0.85, 0.2))
+	draw_string_outline(f, Vector2(0, 90), Data.stage_text(Data.stages.size(), 1), HORIZONTAL_ALIGNMENT_CENTER, W, 56, 14, Color.BLACK)
+	draw_string(f, Vector2(0, 90), Data.stage_text(Data.stages.size(), 1), HORIZONTAL_ALIGNMENT_CENTER, W, 56, Color(1, 0.85, 0.2))
 	var y := 120 + s.y * sc + 50
 	for line in [Data.t("ending"), Data.t("ending2"), Data.t("final_score") % score]:
 		draw_string_outline(Data.font_bold, Vector2(0, y), line, HORIZONTAL_ALIGNMENT_CENTER, W, 28, 8, Color.BLACK)

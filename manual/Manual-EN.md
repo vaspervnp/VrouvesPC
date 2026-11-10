@@ -17,7 +17,7 @@
 8. [Neighbours](#neighbours)
 9. [The invaders](#the-invaders)
 10. [Vrouves, score and lives](#vrouves-score-and-lives)
-11. [The seven stages](#the-seven-stages)
+11. [The ten stages](#the-ten-stages)
 12. [Tips](#tips)
 13. [Questions and problems](#questions-and-problems)
 
@@ -180,7 +180,7 @@ Every stage starts again from scratch: 120 vrouves, full sacks and an empty map.
 can build the chosen defender there (or if a defender already stands there), and red if
 you cannot. A white circle shows how far the defender will reach.
 
-**The bottom bar** has the six defender cards (number key, price, name). On a card you
+**The bottom bar** has the seven defender cards (number key, price, name). On a card you
 cannot afford, the price is red; a defender that has not joined yet shows a **?**. The text next to the
 cards describes the chosen defender, or the defender under the mouse and what it sells
 for. A second line shows the [neighbour bonus](#neighbours) that a defender would get on
@@ -197,11 +197,11 @@ Everything can be done with the mouse alone, or with the keyboard alone.
 | point at a square | **← → ↑ ↓** or **O P Q A** | move the cursor |
 | left click | **SPACE** or **ENTER** | build the chosen defender |
 | right click | **S**, **DEL** or **BACKSPACE** | sell a defender (half its price back) |
-| click a card | **1** – **6** | choose a defender |
+| click a card | **1** – **7** | choose a defender |
 | *Next wave* | **N** | call the next wave now |
 | *Speed* | **F** | game speed ×1, ×2, ×3 |
 | *Pause* | **H** | pause / continue |
-| | **ESC** | pause; **ESC** again quits to the title |
+| | **ESC** | pause and ask *Quit this game?*; **ESC** again quits to the title, **H** goes on |
 | | **L** | English / Ελληνικά |
 | | **M** | music on / off |
 | | **F11** or **Alt+ENTER** | full screen / window |
@@ -220,6 +220,7 @@ When a stage ends, click or press **SPACE** to continue.
 | <img src="img/psssst.png" height="56"> | **4 Psssst** | 80 | 3.0 | 0.44 s | 5 | ✔ | 40 |
 | <img src="img/cauldron.png" height="56"> | **5 Cauldron** | 110 | 1.8 | 1.32 s | 8 (area) | ✘ | 55 |
 | <img src="img/baker.png" height="56"> | **6 Baker** | 60 | 2.8 | 1.48 s | 16 (area) | ✔ | 30 |
+| <img src="img/lyra.png" height="56"> | **7 Lyra player** | 90 | 2.2 | 1.04 s | 4 (area) | ✔ | 45 |
 
 *Reach* is in squares, from the middle of the defender's square.
 
@@ -248,12 +249,17 @@ right, above or below) puts it out of action for 5 seconds.
 **Baker.** Hurls *dakos* (barley rusks). Where a rusk lands it **splashes everything** within
 one square, drones too, even if its target is already gone. Slow, but deadly against crowds.
 
+**Lyra player.** He joins on stage 8. His *mantinada* reaches **every invader around him,
+walkers and drones alike**, the only defender that hits drones over an area, and the drones
+he hits **slow down** for 1.2 seconds. The damage is small and armour counts against it, so
+he is for swarms of drones, not for tanks.
+
 ### Where you can build
 
 | Square | Who can go there |
 | --- | --- |
 | grass, the pitch | every defender |
-| trees, cacti, goats, cypresses, walls, graves | **Psssst only** |
+| trees, cacti, goats, cypresses, walls, graves, rocks, sheep, jars, the wedding tables | **Psssst only** |
 | the road, the building and its yard | nobody |
 
 Each square holds one defender. You can sell a defender at any time, even in the middle
@@ -272,9 +278,12 @@ defender: on the square to the left, right, above or below, not diagonally.
 | Yiayia | Baker | **+20%** (14 → 17) |
 | Psssst | Cretan | **−20%** (5 → 4) |
 | Baker | Cretan | **−50%** (16 → 8) |
+| Lyra player | another Lyra player | **−50%** (4 → 2) |
+| Lyra player | Yiayia | **+50%** (4 → 6) |
 
 * Only the defender in the first column changes. A Cretan next to a Bride stays the same.
-* Two partners do not count twice.
+* Two partners do not count twice. A Lyra player next to both a Yiayia and another Lyra
+  player gets the −50%.
 * **At most three bonuses** can be active at a time on the map. A defender that already has
   a bonus keeps it. When all three places are taken, the bottom bar says *(bonus places
   full)* in grey.
@@ -356,7 +365,7 @@ and press **ENTER**. A game you quit with **ESC** still counts.
 
 ---
 
-## The seven stages
+## The ten stages
 
 | Stage | Protect | New defender |
 | --- | --- | --- |
@@ -367,9 +376,18 @@ and press **ENTER**. A game you quit with **ESC** still counts.
 | 5 | the school | Cauldron |
 | 6 | the village pitch | |
 | 7 | the cemetery church | |
+| 8 | the sheepfold up the mountain | Lyra player |
+| 9 | the olive press | |
+| 10 | the Bride's wedding | (no Bride: she is at the altar!) |
 
-Save the cemetery church and the whole village celebrates with a feast in front of the
-school. *Kali orexi!*
+On **the sheepfold** a long road winds among rocks, walls and sheep, and swarms of drones
+come straight over them. **The olive press** has **two roads**, one from each side: every
+other walker takes the second, and they meet just before the press. At **the Bride's
+wedding** the road runs between the guests' tables, and the Bride cannot be built: hold
+them off without her!
+
+Save the wedding and the whole village dances at the feast in front of the church.
+*Kali orexi!*
 
 ---
 
@@ -387,6 +405,10 @@ school. *Kali orexi!*
 * **Yiayia and the Cauldron** slow the walkers down, so the others get more shots at them.
   Keep the Cauldrons one square away from the road, or tanks will dent them.
 * **Call waves early** when your defence is strong: it pays vrouves and points.
+* **Lyra players where the drones fly,** with a Yiayia next to each, and the Lyra players
+  apart from one another.
+* **At the olive press,** defend where the two roads meet rather than splitting your
+  defenders between them.
 * **Sell and rebuild.** Selling gives half back. Moving a Cretan away from a Baker is often
   worth it.
 * Press **F** to speed up the easy waves, and **H** to stop and think.

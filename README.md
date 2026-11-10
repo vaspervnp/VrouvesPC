@@ -1,8 +1,8 @@
 # LET'S GO FOR VROUVES / ΠΑΜΕ ΓΙΑ ΒΡΟΥΒΕΣ (PC)
 
 A cute top-down tower defence for Windows, Linux and macOS, made with Godot 4.7. It is a
-port of the Amstrad CPC game in `../VrouvesCPC`: the same seven stages, waves, defenders,
-invaders and rules, with new cartoon graphics rendered in Blender.
+port of the Amstrad CPC game in `../VrouvesCPC`: the same ten stages, waves, defenders
+(the Lyra player too), invaders and rules, with new cartoon graphics rendered in Blender.
 
 Armed with EU Directive 8647/2026, Frankenstein & Moreau Co. send bio-drones, compliance
 guards and weed-destroying tanks to wipe out the wild, "copyrighted" *vrouves* of Crete.
@@ -20,11 +20,11 @@ package and Microsoft Edge on the Windows side of WSL).
 | --- | --- |
 | Point at a tile, left click / SPACE | Build the chosen defender |
 | Right click / S | Sell (half price back) |
-| 1 – 6, or click a card | Choose a defender |
+| 1 – 7, or click a card | Choose a defender |
 | Arrows / Q A O P | Move the cursor |
 | N | Call the next wave now (half the seconds left are paid as a bonus) |
 | F | Game speed x1 / x2 / x3 |
-| H | Pause; ESC pauses, ESC again quits to the title |
+| H | Pause; ESC pauses and asks, ESC again quits to the title |
 | L | English / Ελληνικά |
 | M | Music on / off |
 | F11, Alt+Enter | Full screen |
@@ -47,8 +47,10 @@ second, path steps, ranges, armour, neighbour bonuses, score, lives).
   * `render_sprites.py` – `art/sprites/` (defenders, invaders in four directions and two
     frames, sacks, shots, effects);
   * `render_stages.py` + `buildings.py` – `art/stages/stageN.png`, each stage's map with its
-    building (kafenio, church, town hall, bakery, school, pitch, cemetery chapel);
-  * `title_blender.py` and `ending_blender.py` – `art/title.png` and `art/ending.png`.
+    building (kafenio, church, town hall, bakery, school, pitch, cemetery chapel,
+    sheepfold, olive press, the wedding church);
+  * `title_blender.py` – `art/title.png`, and `wedding_blender.py`, the CPC version's
+    wedding feast, which is `art/ending.png`.
 
   The stage pictures are rendered at 2560 × 1792 and scaled to 1920 × 1344.
 * `tools/run_windowed.sh SECS [args]` runs the game from WSL in a window for SECS seconds,
@@ -56,7 +58,8 @@ second, path steps, ranges, armour, neighbour bonuses, score, lives).
   stage, `--bot` lets it play itself (`--botspeed N`), `--perf` prints frame timings,
   `--shots DIR` saves a screenshot every 3 s, `--exit SECS` quits, `--lang en|gr` sets the
   language and `--music` turns the music on for that run, `--funds N` gives the bot more
-  vrouves, `--ending SCORE` shows the ending.
+  vrouves, `--plan` has it build the CPC's plan for the stage (`tests/plans.json`, from
+  VrouvesCPC's `tools/scenario.py`) to check the balance, `--ending SCORE` shows the ending.
 
 ## Video
 

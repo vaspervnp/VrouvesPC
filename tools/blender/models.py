@@ -24,6 +24,9 @@ blender_toon.C.update({
     "shutter": (0.1, 0.45, 0.85), "water": (0.35, 0.7, 1.0), "gold": (1.0, 0.78, 0.15),
     "tomato": (0.95, 0.15, 0.08), "feta": (1.0, 1.0, 0.95), "rusk": (0.78, 0.5, 0.2),
     "lime": (0.75, 1.0, 0.3), "purple": (0.55, 0.25, 0.75), "grass2": (0.17, 0.6, 0.1),
+    "rock": (0.62, 0.6, 0.58), "rock2": (0.48, 0.47, 0.46), "wool": (0.97, 0.96, 0.9),
+    "clay": (0.78, 0.4, 0.2), "clay2": (0.6, 0.28, 0.12), "cheese": (1.0, 0.92, 0.6),
+    "ribbon": (1.0, 0.85, 0.9),
 })
 
 
@@ -173,6 +176,52 @@ def baker(t, p="Baker"):
     # a dakos ready to throw, in the other hand
     t.sphere(p + "_hand2", (-0.7, -0.45, 1.6), (0.13, 0.13, 0.13), "skin")
     dakos(t, p + "_dk", -0.7, -0.55, 1.85, s=0.55)
+
+
+def lyra(t, p="Lyra"):
+    """the Lyra player: a bearded Cretan on a stool, the lyra upright on his knee, bow across"""
+    t.cyl(p + "_stool", (0, 0.15, 0.35), 0.42, 0.12, "wood", verts=16)
+    for k in range(3):
+        a = R(90 + k * 120)
+        t.cyl(p + "_sleg%d" % k, (math.cos(a) * 0.3, 0.15 + math.sin(a) * 0.25, 0.15), 0.05, 0.32, "wood", verts=8)
+    t.cretan(p, 0, 0.05, 0.05, look=(0.4, -0.2), beard=True)
+    t.box(p + "_shirt", (0, -0.52, 1.35), (0.45, 0.06, 0.55), "white")
+    for sd in (-1, 1):      # knees and boots, sitting
+        t.sphere(p + "_knee%d" % sd, (sd * 0.3, -0.45, 0.62), (0.24, 0.4, 0.2), "black")
+        t.sphere(p + "_boot%d" % sd, (sd * 0.3, -0.75, 0.14), (0.2, 0.3, 0.14), "black")
+    # the lyra on his left knee, its pear-shaped body and neck, and the bow with its bells
+    t.sphere(p + "_body", (-0.3, -1.0, 1.1), (0.34, 0.12, 0.52), "wood")
+    t.sphere(p + "_hole", (-0.3, -1.1, 1.25), (0.06, 0.03, 0.12), "hole")
+    t.cyl(p + "_neck", (-0.3, -1.0, 1.8), 0.09, 0.55, "brown", verts=10)
+    t.sphere(p + "_peg", (-0.3, -1.0, 2.12), (0.14, 0.08, 0.11), "brown")
+    for k in range(3):
+        t.box(p + "_str%d" % k, (-0.38 + k * 0.08, -1.13, 1.4), (0.015, 0.01, 1.0), "cream")
+    t.sphere(p + "_hand_l", (-0.45, -1.02, 1.8), (0.13, 0.13, 0.13), "skin")
+    t.cyl(p + "_bow", (0.05, -1.18, 1.3), 0.03, 1.4, "wood", rot=(0, R(78), 0), verts=8)
+    t.sphere(p + "_hand_r", (0.55, -1.1, 1.4), (0.13, 0.13, 0.13), "skin")
+    for k in range(3):
+        t.sphere(p + "_bell%d" % k, (0.25 + k * 0.14, -1.22, 1.38), (0.07, 0.07, 0.07), "gold")
+
+
+def note(t, p, x, z, double=False, col="yellow"):
+    """a musical note standing up in the picture"""
+    t.sphere(p + "_head", (x, -0.1, z), (0.2, 0.08, 0.15), col, rot=(0, R(-20), 0))
+    t.box(p + "_stem", (x + 0.17, -0.1, z + 0.38), (0.05, 0.05, 0.75), col)
+    if double:
+        t.sphere(p + "_head2", (x + 0.6, -0.1, z + 0.1), (0.2, 0.08, 0.15), col, rot=(0, R(-20), 0))
+        t.box(p + "_stem2", (x + 0.77, -0.1, z + 0.48), (0.05, 0.05, 0.75), col)
+        t.box(p + "_beam", (x + 0.47, -0.1, z + 0.8), (0.65, 0.05, 0.14), col, rot=(0, R(-9), 0))
+    else:
+        t.box(p + "_flag", (x + 0.32, -0.1, z + 0.6), (0.3, 0.05, 0.1), col, rot=(0, R(35), 0))
+
+
+def notes(t, frame=0):
+    if frame == 0:
+        note(t, "N1", -0.55, 0.9)
+        note(t, "N2", 0.25, 1.35, double=True)
+    else:
+        note(t, "N1", -0.7, 1.3, double=True)
+        note(t, "N2", 0.35, 0.8)
 
 
 def dakos(t, p, x, y, z, s=1.0):
@@ -443,6 +492,77 @@ def wall_cell(t, p, x, y, w, d, left, right, up, down):
     for k in range(3):
         t.sphere(p + "_rock%d" % k, (x - 0.25 + 0.25 * k, y - cd / 2 + 0.02, 0.2 + 0.25 * (k % 2)),
                  (0.16, 0.05, 0.11), "stone2")
+
+
+def rock(t, p, x, y, kind=0):
+    """a grey boulder; Psssst hovers over it"""
+    if kind == 0:
+        t.sphere(p + "_a", (x - 0.1, y + 0.1, 0.55), (0.85, 0.7, 0.6), "rock", rot=(0, R(10), R(20)))
+        t.sphere(p + "_b", (x + 0.55, y - 0.3, 0.3), (0.45, 0.4, 0.32), "rock2")
+    else:
+        t.sphere(p + "_a", (x, y, 0.35), (0.75, 0.6, 0.38), "rock2", rot=(0, R(-8), R(-15)))
+        t.sphere(p + "_b", (x - 0.55, y - 0.35, 0.2), (0.3, 0.26, 0.2), "rock")
+    t.sphere(p + "_moss", (x - 0.2, y - 0.2, 0.1), (0.25, 0.15, 0.08), "grass2")
+
+
+def sheep(t, p, x, y, turn=0, s=1.0):
+    t.begin()
+    for k, (dx, dy) in enumerate([(-0.4, -0.1), (0.4, -0.1), (-0.4, 0.3), (0.4, 0.3)]):
+        t.cyl(p + "_leg%d" % k, (dx, dy, 0.25), 0.07, 0.5, "dark", verts=8)
+    for k, (dx, dz, r) in enumerate([(-0.35, 0.8, 0.42), (0.1, 0.85, 0.48), (0.4, 0.78, 0.4),
+                                     (-0.05, 1.12, 0.38), (0.25, 1.05, 0.34)]):
+        t.sphere(p + "_wool%d" % k, (dx, 0.1, dz), (r, r * 0.95, r * 0.85), "wool")
+    head = ((0.75, -0.15, 0.95), (0.24, 0.22, 0.28))
+    t.sphere(p + "_head", *head, "dark")
+    t.eye(p + "_eye_l", head, -0.08, 0.05, 0.07, look=(0.3, 0), pupil=0.35)
+    t.eye(p + "_eye_r", head, 0.08, 0.05, 0.07, look=(0.3, 0), pupil=0.35)
+    for sd in (-1, 1):
+        t.sphere(p + "_ear%d" % sd, (0.75 + sd * 0.26, -0.1, 1.02), (0.15, 0.05, 0.06), "dark")
+    t.sphere(p + "_bell", (0.62, -0.35, 0.7), (0.08, 0.08, 0.09), "gold")
+    return t.end(p, (x, y, 0), turn, s)
+
+
+def jar(t, p, x, y, s=1.0):
+    """a big clay pithari"""
+    t.sphere(p + "_body", (x, y, 0.95 * s), (0.62 * s, 0.62 * s, 0.85 * s), "clay")
+    t.cyl(p + "_neck", (x, y, 1.75 * s), 0.34 * s, 0.25 * s, "clay", verts=16)
+    t.torus(p + "_lip", (x, y, 1.88 * s), 0.34 * s, 0.07 * s, "clay2")
+    t.cyl(p + "_foot", (x, y, 0.12 * s), 0.35 * s, 0.24 * s, "clay2", verts=16)
+    for k in range(2):
+        t.torus(p + "_band%d" % k, (x, y, (0.9 + 0.35 * k) * s), 0.6 * s - k * 0.04, 0.035 * s, "clay2")
+    for sd in (-1, 1):
+        t.torus(p + "_ear%d" % sd, (x + sd * 0.55 * s, y, 1.45 * s), 0.14 * s, 0.04 * s, "clay2",
+                rot=(R(90), 0, 0))
+
+
+def wedding_table(t, p, x, y, w, left, right):
+    """a cell of the long wedding table: white cloth, plates, bread and wine, and guests
+    above and below it; the ends of the table round off"""
+    x0 = x - w / 2 + (0.35 if not left else 0)
+    x1 = x + w / 2 - (0.35 if not right else 0)
+    cx, cw = (x0 + x1) / 2, x1 - x0
+    t.box(p + "_top", (cx, y, 0.95), (cw, 1.6, 0.1), "white")
+    t.box(p + "_cloth", (cx, y - 0.8, 0.75), (cw, 0.04, 0.4), "white")
+    if not left:
+        t.box(p + "_legl", (x0 + 0.15, y, 0.45), (0.1, 1.2, 0.9), "wood")
+    if not right:
+        t.box(p + "_legr", (x1 - 0.15, y, 0.45), (0.1, 1.2, 0.9), "wood")
+    for k, dx in enumerate((-0.55, 0.55)):
+        t.cyl(p + "_plate%d" % k, (x + dx, y - 0.35, 1.02), 0.28, 0.04, "white", verts=16)
+        t.sphere(p + "_greens%d" % k, (x + dx, y - 0.35, 1.06), (0.18, 0.15, 0.05), "green")
+    t.torus(p + "_kouluri", (x, y + 0.2, 1.05), 0.2, 0.07, "bread")
+    t.cyl(p + "_jug", (x + 0.15, y + 0.35, 1.25), 0.12, 0.45, "clay", verts=10, r2=0.08)
+    t.cyl(p + "_wine", (x - 0.35, y + 0.4, 1.1), 0.07, 0.2, "wine", verts=8)
+    # guests: heads over the far side, and over the near side with their backs to us
+    for k, dx in enumerate((-0.5, 0.5)):
+        col = ("black", "hair", "dark", "wine")[(int(x) + k) % 4]
+        t.sphere(p + "_gb%d" % k, (x + dx, y + 1.05, 1.25), (0.32, 0.25, 0.45), col)
+        head = ((x + dx, y + 1.05, 1.85), (0.27, 0.25, 0.28))
+        t.sphere(p + "_gh%d" % k, *head, "skin")
+        t.face(p + "_gf%d" % k, head, 0.09, (0, 0), smile=0.12, nose=False)
+        t.sphere(p + "_ghair%d" % k, (x + dx, y + 1.12, 2.02), (0.28, 0.24, 0.17), ("black", "hair")[k])
+    t.sphere(p + "_gn", (x, y - 1.05, 1.2), (0.33, 0.26, 0.42), ("red", "shutter", "pink")[int(x) % 3])
+    t.sphere(p + "_gnh", (x, y - 1.05, 1.78), (0.27, 0.25, 0.28), "hair")
 
 
 # ====================================================================== effects and shots

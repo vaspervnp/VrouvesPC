@@ -349,3 +349,146 @@ def cemetery(mp):
         lx = x1 - 3.6 + k * 1.0
         t.cyl("Lamp%d" % k, (lx, yf + 0.9, 0.35), 0.15, 0.7, "gold", verts=10)
         t.sphere("LampF%d" % k, (lx, yf + 0.9, 0.82), (0.08, 0.08, 0.14), "flame")
+
+
+# ====================================================================== 8. the sheepfold
+
+def sheepfold(mp):
+    """the mitato: a stone hut with a flat roof of slabs and grass, a low door, smoke from
+    the cheese fire; in the yard the cheese cauldron, cheeses on a board and the shepherd"""
+    t = mp.t
+    paving(mp, "KP", "stone2")
+    c0, r0, c1, r1 = mp.bounds("K")
+    x0, x1, yf, yb = mp.rect(c0, r0, c1, r1)
+    h = 2.8
+    yh = yf + 1.2
+    d = fit_depth(yh, yb, h + 0.6)
+    cx = (x0 + x1) / 2
+    w = x1 - x0 - 1.0
+    t.box("Mit_wall", (cx, yh + d / 2, h / 2), (w, d, h), "stone")
+    for k in range(10):     # the dry stones of the front
+        sx = x0 + 0.9 + (k % 5) * (w - 0.8) / 4
+        t.sphere("Mit_st%d" % k, (sx, yh - 0.02, 0.5 + 1.2 * (k // 5)), (0.35, 0.06, 0.22), "stone2")
+    t.box("Mit_roof", (cx, yh + d / 2, h + 0.15), (w + 0.4, d + 0.4, 0.3), "rock2")
+    for k in range(7):      # grass growing on the slabs
+        t.sphere("Mit_tuft%d" % k, (x0 + 1.2 + k * (w - 0.8) / 6, yh + 0.4 + (k % 3) * 0.5, h + 0.35),
+                 (0.35, 0.25, 0.15), "grass2")
+    t.box("Mit_door", (cx - 1.5, yh - 0.03, 0.85), (0.9, 0.08, 1.7), "wood")
+    t.box("Mit_lintel", (cx - 1.5, yh - 0.06, 1.8), (1.3, 0.12, 0.2), "rock2")
+    t.box("Mit_win", (cx + 2.0, yh - 0.03, 1.5), (0.5, 0.06, 0.45), "dark")
+    t.cyl("Mit_chim", (x1 - 2.0, yh + d - 1.0, h + 0.7), 0.25, 0.9, "stone2", verts=10)
+    for k in range(3):
+        t.sphere("Mit_smoke%d" % k, (x1 - 2.0 + 0.3 * k, yh + d - 1.0, h + 1.4 + 0.55 * k),
+                 (0.35 + 0.1 * k, 0.3, 0.3), "smoke")
+    flag_gr(t, "MitFlag", x0 + 1.4, yh + d - 1.0, h + 2.3, 0.8)
+    # the yard; the sacks stand on (0,12) (2,12) (4,12) (1,13) (3,13)
+    x, y = mp.centre(4, 13)
+    cauldron_fire(t, "Cheese", x, y + 0.6, "cheese")
+    x, y = mp.centre(0, 13)
+    t.box("Board", (x, y + 0.4, 0.5), (1.6, 0.8, 0.1), "wood")
+    for k in range(3):
+        t.cyl("Graviera%d" % k, (x - 0.5 + k * 0.5, y + 0.4, 0.68), 0.22, 0.25, "cheese", verts=16)
+    x, y = mp.centre(1, 12)
+    shepherd(t, "Shepherd", x + 0.6, y + 0.3)
+
+
+def cauldron_fire(t, p, x, y, brew):
+    for j, a in enumerate((20, -25, 75)):
+        t.cyl(p + "_log%d" % j, (x, y, 0.12), 0.1, 1.2, "brown", rot=(0, R(90), R(a)), verts=8)
+    for j, (dx, h, col) in enumerate([(-0.4, 0.5, "flame"), (0.0, 0.7, "orange"), (0.4, 0.5, "flame")]):
+        t.cyl(p + "_flame%d" % j, (x + dx, y - 0.35, 0.15 + h / 2), 0.14, h, col, verts=10, r2=0)
+    t.cyl(p + "_pot", (x, y, 0.8), 0.55, 0.6, "black", r2=0.48)
+    t.torus(p + "_rim", (x, y, 1.1), 0.52, 0.05, "dark")
+    t.sphere(p + "_brew", (x, y, 1.08), (0.48, 0.48, 0.08), brew)
+
+
+def shepherd(t, p, x, y):
+    """the shepherd: brown cloak, black sariki, his crook"""
+    t.cyl(p + "_body", (x, y, 0.95), 0.52, 1.3, "brown", r2=0.4)
+    head = ((x, y - 0.03, 1.95), (0.5, 0.46, 0.52))
+    t.sphere(p + "_head", *head, "skin")
+    t.face(p, head, 0.13, (0.4, 0.1), smile=0.15)
+    t.sphere(p + "_beard", (x, y - 0.38, 1.7), (0.33, 0.2, 0.25), "smoke")
+    t.sphere(p + "_hat", (x, y, 2.33), (0.54, 0.5, 0.25), "black")
+    t.cyl(p + "_crook", (x + 0.65, y - 0.25, 1.25), 0.06, 2.5, "wood", verts=8)
+    t.torus(p + "_hook", (x + 0.52, y - 0.25, 2.5), 0.15, 0.06, "wood", rot=(R(90), 0, 0), half=True)
+    t.sphere(p + "_hand", (x + 0.6, y - 0.35, 1.3), (0.13, 0.13, 0.13), "skin")
+
+
+# ====================================================================== 9. the olive press
+
+def olive_press(mp):
+    """a stone house with a tiled roof, the blue ΛΙΟΤΡΙΒΙ sign, the big door half open on
+    the press inside, an olive branch; the millstone in front"""
+    t = mp.t
+    paving(mp, "KP", "stone")
+    c0, r0, c1, r1 = mp.bounds("K")
+    x0, x1, yf, yb = mp.rect(c0, r0, c1, r1)
+    h = 3.4
+    yh = yf + 0.9
+    d = fit_depth(yh, yb, h + 1.2)
+    house(t, "Press", x0 + 0.3, x1 - 0.3, yh, d, h, wall="stone", roof="gable", windows=2, door=False,
+          sign="ΛΙΟΤΡΙΒΙ", sign_col="shutter")
+    cx = (x0 + x1) / 2
+    t.box("Press_gap", (cx, yh - 0.02, 1.15), (1.8, 0.06, 2.3), "dark")
+    t.box("Press_leaf", (cx - 1.25, yh - 0.45, 1.15), (0.9, 0.08, 2.3), "wood", rot=(0, 0, R(-55)))
+    t.cyl("Press_screw", (cx + 0.2, yh - 0.08, 1.1), 0.12, 1.6, "wood", verts=8)
+    t.box("Press_beam", (cx + 0.2, yh - 0.1, 1.9), (1.2, 0.1, 0.18), "wood")
+    t.cyl("Press_bed", (cx + 0.2, yh - 0.1, 0.35), 0.5, 0.25, "stone2", verts=16)
+    for k in range(6):      # the olive branch over the door
+        t.sphere("Branch%d" % k, (cx - 0.9 + k * 0.36, yh - 0.12, 2.55 + 0.08 * (k % 2)), (0.2, 0.06, 0.08),
+                 "olive" if k % 2 else "olive2", rot=(0, R((k % 2) * 40 - 20), 0))
+    for k in range(4):
+        t.sphere("BrOl%d" % k, (cx - 0.7 + k * 0.45, yh - 0.16, 2.45), (0.06, 0.05, 0.06), "black")
+    # the millstone, upright on its round bed, against the wall on the left
+    mx = x0 + 1.3
+    t.cyl("Mill_bed", (mx, yh - 0.6, 0.15), 0.9, 0.3, "stone2", verts=20)
+    t.cyl("Mill_wheel", (mx, yh - 0.6, 0.85), 0.6, 0.35, "stone", rot=(R(90), 0, 0), verts=20)
+    t.cyl("Mill_axle", (mx, yh - 0.6, 0.85), 0.08, 1.1, "wood", rot=(R(90), 0, 0), verts=8)
+    for k in range(3):
+        t.sphere("Olives%d" % k, (x1 - 1.2 - k * 0.35, yh - 0.35, 0.15), (0.25, 0.25, 0.15),
+                 "black" if k % 2 else "olive2")
+
+
+# ====================================================================== 10. the wedding
+
+def wedding(mp):
+    """the church of stage 2, decked out for the wedding: garlands and flowers, a red heart to
+    the yard's mosaic, and the groom at the door instead of the priest"""
+    t = mp.t
+    paving(mp, "KP", "stone")
+    c0, r0, c1, r1 = mp.bounds("K")
+    x0, x1, yf, yb = mp.rect(c0, r0, c1, r1)
+    h = 3.6
+    d = fit_depth(yf, yb, h + 2.5)
+    cx = (x0 + x1) / 2
+    w = x1 - x0 - 1.2
+    church_body(t, "Ch", cx, yf + 0.6, w, d, h)
+    # garlands along the front, white and pink, and flowers by the door
+    for k in range(13):
+        u = k / 12
+        gx = cx - w / 2 + 0.2 + u * (w - 0.4)
+        sag = 0.35 * math.sin(math.pi * ((u * 3) % 1))
+        t.sphere("Garl%d" % k, (gx, yf + 0.5, h - 0.3 - sag), (0.16, 0.06, 0.13), "ribbon" if k % 2 else "pink")
+    for sd in (-1, 1):
+        for k in range(4):
+            t.sphere("Fl%d_%d" % (sd, k), (cx + sd * (0.75 + 0.05 * k), yf + 0.5, 0.6 + 0.4 * k),
+                     (0.14, 0.06, 0.14), ("red", "white", "pink", "yellow")[k])
+        t.box("Ribbon%d" % sd, (cx + sd * 0.7, yf + 0.52, 2.1), (0.12, 0.04, 0.9), "ribbon")
+    # the yard's mosaic, with a red middle
+    px0, px1, py0, py1 = mp.rect(*mp.bounds("P"))
+    t.cyl("Mosaic", ((px0 + px1) / 2 + 0.6, (py0 + py1) / 2, 0.06), 1.0, 0.04, "red", verts=24)
+    t.torus("Mosaic_ring", ((px0 + px1) / 2 + 0.6, (py0 + py1) / 2, 0.08), 1.0, 0.08, "gold")
+    groom(t, "Groom", cx - 1.4, yf + 0.2)
+
+
+def groom(t, p, x, y):
+    """a Cretan in his best: no sariki, his hair combed, a white shirt and the wedding crown"""
+    t.cretan(p, x, y, 0.0, look=(0.3, 0.1), sariki=False)
+    t.sphere(p + "_hair", (x, y + 0.05, 2.62), (0.62, 0.56, 0.28), "black")
+    t.box(p + "_shirt", (x, y - 0.52, 1.35), (0.45, 0.06, 0.6), "white")
+    t.torus(p + "_crown", (x, y - 0.02, 2.85), 0.42, 0.07, "white")
+    for k in range(6):
+        a = k * math.pi / 3
+        t.sphere(p + "_cf%d" % k, (x + math.cos(a) * 0.42, y - 0.02 + math.sin(a) * 0.38, 2.9),
+                 (0.08, 0.08, 0.08), "ribbon")
