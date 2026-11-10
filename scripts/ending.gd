@@ -31,13 +31,14 @@ func _unhandled_input(ev: InputEvent) -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(0, 0, W, H), Color(0.35, 0.65, 1.0))
+	# the picture as big as leaves room for the title above and three lines and the prompt below
 	var s := pic.get_size()
-	var sc := W / s.x
-	draw_texture_rect(pic, Rect2(0, 120, W, s.y * sc), false)
+	var sc := minf(W / s.x, 720.0 / s.y)
+	draw_texture_rect(pic, Rect2((W - s.x * sc) / 2, 112, s.x * sc, s.y * sc), false)
 	var f := Data.font_title
 	draw_string_outline(f, Vector2(0, 90), Data.stage_text(Data.stages.size(), 1), HORIZONTAL_ALIGNMENT_CENTER, W, 56, 14, Color.BLACK)
 	draw_string(f, Vector2(0, 90), Data.stage_text(Data.stages.size(), 1), HORIZONTAL_ALIGNMENT_CENTER, W, 56, Color(1, 0.85, 0.2))
-	var y := 120 + s.y * sc + 50
+	var y := 112 + s.y * sc + 44
 	for line in [Data.t("ending"), Data.t("ending2"), Data.t("final_score") % score]:
 		draw_string_outline(Data.font_bold, Vector2(0, y), line, HORIZONTAL_ALIGNMENT_CENTER, W, 28, 8, Color.BLACK)
 		draw_string(Data.font_bold, Vector2(0, y), line, HORIZONTAL_ALIGNMENT_CENTER, W, 28, Color.WHITE)

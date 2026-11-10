@@ -270,7 +270,7 @@ func draw_defenders() -> void:
 		var type: int = Data.TOWER_ORDER[i]
 		var tt: Dictionary = Data.TTYPES[type]
 		var y := r.position.y + 112 + i * 68
-		spr(tt["spr"], Vector2(r.position.x + 90, y + 46), 0.52)
+		spr(tt["spr"], Vector2(r.position.x + 90, y + 46), 0.46)
 		txt(Vector2(r.position.x + 160, y + 10), "%d. %s - %d" % [i + 1, Data.t("name%d" % type), int(tt["cost"])], 24, C_GOLD)
 		txt(Vector2(r.position.x + 160, y + 38), Data.t("desc%d" % type), 19, Color.WHITE)
 	draw_multiline_string(Data.font_bold, Vector2(r.position.x + 60, r.end.y - 92), Data.t("synergy_help"),

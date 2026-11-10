@@ -116,8 +116,9 @@ func start_stage() -> void:
 		if "--plan" in a:
 			# the CPC's build plan for the stage, to check the balance (tests/plans.json)
 			var f := FileAccess.open("res://tests/plans.json", FileAccess.READ)
-			for step in JSON.parse_string(f.get_as_text())["plans"][stage_no - 1]:
-				g.plan.append(step.map(func(v): return int(v)))
+			if f:       # not in an exported game
+				for step in JSON.parse_string(f.get_as_text())["plans"][stage_no - 1]:
+					g.plan.append(step.map(func(v): return int(v)))
 		if "--funds" in a:
 			# a richer start, to fill the map sooner when recording a video
 			g.funds = int(a[a.find("--funds") + 1])
